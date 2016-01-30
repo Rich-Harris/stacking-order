@@ -4,7 +4,7 @@ import * as path from 'path';
 import chalk from 'chalk';
 import Nightmare from 'nightmare';
 
-const lib = fs.readFileSync( 'dist/compare-stacking-order.umd.js' );
+const lib = fs.readFileSync( 'dist/stacking-order.umd.js' );
 const libDataUri = `data:application/javascript;base64,${lib.toString( 'base64' )}`;
 const template = fs.readFileSync( 'test/templates/page.html',  'utf-8' ).replace( '__LIB__', libDataUri );
 

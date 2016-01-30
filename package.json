@@ -26,7 +26,7 @@
     "build": "npm run build:umd && npm run build:es6",
     "build:umd": "rollup -c -f umd -o dist/stacking-order.umd.js",
     "build:es6": "rollup -c -f es6 -o dist/stacking-order.es6.js",
-    "prepublish": "npm lint && rm -rf dist && npm test && npm run build:es6",
+    "prepublish": "npm run lint && rm -rf dist && npm test && npm run build:es6",
     "pretest": "npm run build:umd",
     "test": "babel-node test/test.js",
     "lint": "eslint src"

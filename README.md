@@ -14,7 +14,7 @@ The tie-breaker, if that doesn't yield a conclusive answer, is the position in t
 npm install --save stacking-order
 ```
 
-...or grab a copy from [npmcdn.com/stacking-order](npmcdn.com/stacking-order).
+...or grab a copy from [npmcdn.com/stacking-order](https://npmcdn.com/stacking-order).
 
 ## Usage
 
@@ -30,7 +30,7 @@ var order = stackingOrder.compare( a, b );
 
 ## Bugs
 
-It's entirely possible that the algorithm used here doesn't exactly match the spec. If you find a bug, please [raise an issue](TK) after reading [CONTRIBUTING.md](CONTRIBUTING.md). Thanks!
+It's entirely possible that the algorithm used here doesn't exactly match the spec. If you find a bug, please [raise an issue](https://gitlab.com/Rich-Harris/stacking-order/issues) after reading [CONTRIBUTING.md](CONTRIBUTING.md). Thanks!
 
 ## License
 
