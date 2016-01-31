@@ -1,0 +1,10 @@
+before_script:
+    - wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.30.2/install.sh | bash
+    - source /root/.bashrc
+    - nvm install node
+    - nvm use node
+    - npm install
+
+test:
+    script:
+        - npm test
