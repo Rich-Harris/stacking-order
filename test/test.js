@@ -1,8 +1,8 @@
-/*global process, stackingOrder */
-import * as fs from 'fs';
-import * as path from 'path';
-import chalk from 'chalk';
-import Nightmare from 'nightmare';
+/*global require, process, stackingOrder */
+var fs = require( 'fs' );
+var path = require( 'path' );
+var chalk = require( 'chalk' );
+var Nightmare = require( 'nightmare' );
 
 const lib = fs.readFileSync( 'dist/stacking-order.umd.js' );
 const libDataUri = `data:application/javascript;base64,${lib.toString( 'base64' )}`;
@@ -21,12 +21,13 @@ const samples = fs.readdirSync( 'test/samples' )
 
 const nightmare = Nightmare({ show: false });
 
-nightmare.on( 'console', function ( type, ...args ) {
+nightmare.on( 'console', function ( type ) {
+	var args = [].slice.call( arguments, 1 );
 	console[ type ].apply( console, args ); // eslint-disable-line no-console
 });
 
-let passed = 0;
-let failed = 0;
+var passed = 0;
+var failed = 0;
 
 function runNextTest () {
 	const sample = samples.shift();
