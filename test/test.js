@@ -59,7 +59,7 @@ function runNextTest () {
 				stackingOrder.compare( front, back );
 			});*/
 
-			const front = document.querySelector( '[data-front]' );
+			const front = document.querySelector( '[data-front]' ) || document.querySelector( 'shadow-host' ).shadowRoot.querySelector( '[data-front]' );
 			const back = document.querySelector( '[data-back]' );
 
 			return stackingOrder.compare( front, back );
