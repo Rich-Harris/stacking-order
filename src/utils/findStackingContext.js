@@ -1,7 +1,9 @@
+import getParent from './getParent';
+
 const props = /\b(?:position|zIndex|opacity|transform|webkitTransform|mixBlendMode|filter|webkitFilter|isolation)\b/;
 
 function isFlexItem ( node ) {
-	const display = getComputedStyle( node.parentNode ).display;
+	const display = getComputedStyle( getParent( node ) ).display;
 	return display === 'flex' || display === 'inline-flex';
 }
 
