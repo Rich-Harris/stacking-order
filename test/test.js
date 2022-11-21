@@ -1,82 +1,48 @@
-/*global require, process, stackingOrder */
-var fs = require( 'fs' );
-var path = require( 'path' );
-var chalk = require( 'chalk' );
-var Nightmare = require( 'nightmare' );
+import fs from 'fs';
+import c from 'kleur';
+import { chromium } from 'playwright';
 
-const lib = fs.readFileSync( 'dist/stacking-order.umd.js' );
-const libDataUri = `data:application/javascript;base64,${lib.toString( 'base64' )}`;
-const template = fs.readFileSync( 'test/templates/page.html',  'utf-8' ).replace( '__LIB__', libDataUri );
+const lib = `data:application/javascript;base64,${fs.readFileSync('src/index.js', 'base64')}`;
+const template = fs.readFileSync('test/templates/page.html', 'utf-8').replace('__LIB__', lib);
 
-const samples = fs.readdirSync( 'test/samples' )
-	.filter( file => file[0] !== '.' )
-	.map( file => {
-		const title = file.replace( '.html', '' );
-		file = path.resolve( 'test/samples', file );
+const browser = await chromium.launch();
+const page = await browser.newPage();
 
-		const html = fs.readFileSync( file, 'utf-8' );
+let passed = 0;
+let failed = 0;
 
-		return { title, file, html };
+for (const file of fs.readdirSync('test/samples')) {
+	if (file[0] === '.') continue;
+
+	const title = file.replace('.html', '');
+	const html = template.replace('__MARKUP__', fs.readFileSync(`test/samples/${file}`, 'utf-8'));
+
+	await page.goto(`data:text/html,${encodeURIComponent(html)}`);
+
+	const order = await page.evaluate(() => {
+		const front =
+			document.querySelector('[data-front]') ||
+			document.querySelector('shadow-host').shadowRoot.querySelector('[data-front]');
+		const back = document.querySelector('[data-back]');
+
+		return compare(front, back);
 	});
 
-const nightmare = Nightmare({ show: false });
-
-nightmare.on( 'console', function ( type ) {
-	var args = [].slice.call( arguments, 1 );
-	console[ type ].apply( console, args ); // eslint-disable-line no-console
-});
-
-var passed = 0;
-var failed = 0;
-
-function runNextTest () {
-	const sample = samples.shift();
-
-	if ( !sample ) {
-		if ( passed ) {
-			console.log( chalk.green( `${passed} passed` ) ); // eslint-disable-line no-console
-			process.exit( 0 );
-		}
-
-		if ( failed ) {
-			console.log( chalk.red( `${failed} failed` ) ); // eslint-disable-line no-console
-			process.exit( 1 );
-		}
+	if (order === 1) {
+		console.error(`${c.green('✓')} ${title}`);
+		passed += 1;
+	} else {
+		console.error(`${c.red('✗')} ${title}`);
+		failed += 1;
 	}
-
-	const html = template.replace( '__MARKUP__', sample.html );
-	const url = `data:text/html,${encodeURIComponent(html)}`;
-
-
-	nightmare
-		.goto( url )
-		.evaluate( () => {
-			// use this block for debugging via console
-			/*setTimeout( () => {
-				const front = document.querySelector( '[data-front]' );
-				const back = document.querySelector( '[data-back]' );
-
-				stackingOrder.compare( front, back );
-			});*/
-
-			const front = document.querySelector( '[data-front]' ) || document.querySelector( 'shadow-host' ).shadowRoot.querySelector( '[data-front]' );
-			const back = document.querySelector( '[data-back]' );
-
-			return stackingOrder.compare( front, back );
-		})
-		.run( ( err, order ) => {
-			if ( err ) throw err;
-
-			if ( order === 1 ) {
-				console.error( `${chalk.green( '✓' )} ${sample.title}` ); // eslint-disable-line no-console
-				passed += 1;
-			} else {
-				console.error( `${chalk.red( '✗' )} ${sample.title}` ); // eslint-disable-line no-console
-				failed += 1;
-			}
-
-			runNextTest();
-		});
 }
 
-runNextTest();
+if (passed) {
+	console.log(c.green(`${passed} passed`));
+	process.exit(0);
+}
+
+if (failed) {
+	console.log(c.red(`${failed} failed`));
+	process.exit(1);
+}

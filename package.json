@@ -1,32 +1,28 @@
 {
 	"name": "stacking-order",
 	"description": "Determine which of two elements is in front of the other",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"author": "Rich Harris",
-	"main": "dist/stacking-order.umd.js",
-	"jsnext:main": "dist/stacking-order.es6.js",
-	"repository": "https://gitlab.com/Rich-Harris/stacking-order.git",
+	"type": "module",
+	"main": "src/index.js",
+	"repository": "https://github.com/Rich-Harris/stacking-order.git",
 	"license": "MIT",
 	"devDependencies": {
-		"babel-cli": "^6.4.5",
-		"babel-preset-es2015": "^6.3.13",
-		"chalk": "^1.1.1",
-		"eslint": "^1.10.3",
-		"rollup": "^0.25.1",
-		"rollup-plugin-buble": "^0.4.0"
+		"kleur": "^4.1.5",
+		"playwright": "^1.28.0"
 	},
 	"files": [
 		"src",
-		"dist",
 		"README.md"
 	],
+	"exports": {
+		".": {
+			"import": "./src/index.js",
+			"default": "./src/index.js"
+		}
+	},
 	"scripts": {
-		"build": "npm run build:umd && npm run build:es6",
-		"build:umd": "rollup -c -f umd -o dist/stacking-order.umd.js",
-		"build:es6": "rollup -c -f es6 -o dist/stacking-order.es6.js",
-		"prepublish": "npm run lint && rm -rf dist && npm test && npm run build:es6",
-		"pretest": "npm run build:umd",
-		"test": "node test/test.js",
-		"lint": "eslint src"
+		"prepublishOnly": "npm test",
+		"test": "node test/test.js"
 	}
 }

@@ -1,51 +1,96 @@
-import findStackingContext from './utils/findStackingContext.js';
-import getAncestors from './utils/getAncestors.js';
-import getZIndex from './utils/getZIndex.js';
-import last from './utils/last.js';
+export function compare(a, b) {
+	if (a === b) throw new Error('Cannot compare node with itself');
 
-export function compare ( a, b ) {
-	if ( a === b ) throw new Error( 'Cannot compare node with itself' );
-
-	let ancestors = {
-		a: getAncestors( a ),
-		b: getAncestors( b )
+	const ancestors = {
+		a: get_ancestors(a),
+		b: get_ancestors(b),
 	};
 
-	let commonAncestor;
+	let common_ancestor;
 
 	// remove shared ancestors
-	while ( last( ancestors.a ) === last( ancestors.b ) ) {
+	while (ancestors.a.at(-1) === ancestors.b.at(-1)) {
 		a = ancestors.a.pop();
 		b = ancestors.b.pop();
 
-		commonAncestor = a;
+		common_ancestor = a;
 	}
 
-	let stackingContexts = {
-		a: findStackingContext( ancestors.a ),
-		b: findStackingContext( ancestors.b )
+	const z_indexes = {
+		a: get_z_index(find_stacking_context(ancestors.a)),
+		b: get_z_index(find_stacking_context(ancestors.b)),
 	};
 
-	let zIndexes = {
-		a: getZIndex( stackingContexts.a ),
-		b: getZIndex( stackingContexts.b )
-	};
+	if (z_indexes.a === z_indexes.b) {
+		const children = common_ancestor.childNodes;
 
-	if ( zIndexes.a === zIndexes.b ) {
-		const children = commonAncestor.childNodes;
-
-		const furthestAncestors = {
-			a: last( ancestors.a ),
-			b: last( ancestors.b )
+		const furthest_ancestors = {
+			a: ancestors.a.at(-1),
+			b: ancestors.b.at(-1),
 		};
 
 		let i = children.length;
-		while ( i-- ) {
+		while (i--) {
 			const child = children[i];
-			if ( child === furthestAncestors.a ) return 1;
-			if ( child === furthestAncestors.b ) return -1;
+			if (child === furthest_ancestors.a) return 1;
+			if (child === furthest_ancestors.b) return -1;
 		}
 	}
 
-	return Math.sign( zIndexes.a - zIndexes.b );
+	return Math.sign(z_indexes.a - z_indexes.b);
+}
+
+const props = /\b(?:position|zIndex|opacity|transform|webkitTransform|mixBlendMode|filter|webkitFilter|isolation)\b/;
+
+function is_flex_item(node) {
+	const display = getComputedStyle(get_parent(node)).display;
+	return display === 'flex' || display === 'inline-flex';
+}
+
+function creates_stacking_context(node) {
+	const style = getComputedStyle(node);
+
+	// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context
+	if (style.position === 'fixed') return true;
+	if ((style.zIndex !== 'auto' && style.position !== 'static') || is_flex_item(node)) return true;
+	if (+style.opacity < 1) return true;
+	if ('transform' in style && style.transform !== 'none') return true;
+	if ('webkitTransform' in style && style.webkitTransform !== 'none') return true;
+	if ('mixBlendMode' in style && style.mixBlendMode !== 'normal') return true;
+	if ('filter' in style && style.filter !== 'none') return true;
+	if ('webkitFilter' in style && style.webkitFilter !== 'none') return true;
+	if ('isolation' in style && style.isolation === 'isolate') return true;
+	if (props.test(style.willChange)) return true;
+	if (style.webkitOverflowScrolling === 'touch') return true;
+
+	return false;
+}
+
+function find_stacking_context(nodes) {
+	let i = nodes.length;
+
+	while (i--) {
+		if (creates_stacking_context(nodes[i])) return nodes[i];
+	}
+
+	return null;
+}
+
+function get_z_index(node) {
+	return (node && Number(getComputedStyle(node).zIndex)) || 0;
+}
+
+function get_ancestors(node) {
+	const ancestors = [];
+
+	while (node) {
+		ancestors.push(node);
+		node = get_parent(node);
+	}
+
+	return ancestors; // [ node, ... <body>, <html>, document ]
+}
+
+function get_parent(node) {
+	return node.parentNode?.host || node.parentNode;
 }
