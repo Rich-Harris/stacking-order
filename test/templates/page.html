@@ -1,8 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 	<head></head>
 	<body>
 		__MARKUP__
-		<script src='__LIB__'></script>
+		<script type="module">
+			import { compare } from '__LIB__';
+			window.compare = compare;
+		</script>
 	</body>
 </html>

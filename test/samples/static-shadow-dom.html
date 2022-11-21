@@ -1,17 +1,17 @@
 <script>
-  class ShadowHost extends HTMLElement {
-    constructor() {
-      super();
+	class ShadowHost extends HTMLElement {
+		constructor() {
+			super();
 
-      const frontElement = document.createElement('div');
-      frontElement.dataset.front = '';
+			const frontElement = document.createElement('div');
+			frontElement.dataset.front = '';
 
-      const shadow = this.attachShadow({ mode: 'open' });
-      shadow.appendChild(frontElement);
-    }
-  }
+			const shadow = this.attachShadow({ mode: 'open' });
+			shadow.appendChild(frontElement);
+		}
+	}
 
-  customElements.define('shadow-host', ShadowHost);
+	customElements.define('shadow-host', ShadowHost);
 </script>
 
 <div data-back></div>
