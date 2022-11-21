@@ -2,7 +2,7 @@ import fs from 'fs';
 import c from 'kleur';
 import { chromium } from 'playwright';
 
-const lib = `data:application/javascript;base64,${fs.readFileSync('src/index.js', 'base64')}`;
+const lib = `data:application/javascript;base64,${fs.readFileSync('index.js', 'base64')}`;
 const template = fs.readFileSync('test/templates/page.html', 'utf-8').replace('__LIB__', lib);
 
 const browser = await chromium.launch();

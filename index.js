@@ -1,3 +1,9 @@
+/**
+ * Determine which of two nodes appears in front of the other —
+ * if `a` is in front, returns 1, otherwise returns -1
+ * @param {HTMLElement} a
+ * @param {HTMLElement} b
+ */
 export function compare(a, b) {
 	if (a === b) throw new Error('Cannot compare node with itself');
 
@@ -42,11 +48,13 @@ export function compare(a, b) {
 
 const props = /\b(?:position|zIndex|opacity|transform|webkitTransform|mixBlendMode|filter|webkitFilter|isolation)\b/;
 
+/** @param {HTMLElement} node */
 function is_flex_item(node) {
 	const display = getComputedStyle(get_parent(node)).display;
 	return display === 'flex' || display === 'inline-flex';
 }
 
+/** @param {HTMLElement} node */
 function creates_stacking_context(node) {
 	const style = getComputedStyle(node);
 
@@ -61,11 +69,13 @@ function creates_stacking_context(node) {
 	if ('webkitFilter' in style && style.webkitFilter !== 'none') return true;
 	if ('isolation' in style && style.isolation === 'isolate') return true;
 	if (props.test(style.willChange)) return true;
+	// @ts-expect-error
 	if (style.webkitOverflowScrolling === 'touch') return true;
 
 	return false;
 }
 
+/** @param {HTMLElement[]} nodes */
 function find_stacking_context(nodes) {
 	let i = nodes.length;
 
@@ -76,10 +86,12 @@ function find_stacking_context(nodes) {
 	return null;
 }
 
+/** @param {HTMLElement} node */
 function get_z_index(node) {
 	return (node && Number(getComputedStyle(node).zIndex)) || 0;
 }
 
+/** @param {HTMLElement} node */
 function get_ancestors(node) {
 	const ancestors = [];
 
@@ -91,6 +103,8 @@ function get_ancestors(node) {
 	return ancestors; // [ node, ... <body>, <html>, document ]
 }
 
+/** @param {HTMLElement} node */
 function get_parent(node) {
+	// @ts-ignore
 	return node.parentNode?.host || node.parentNode;
 }

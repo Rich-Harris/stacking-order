@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"declaration": true,
+		"declarationDir": "types",
+		"emitDeclarationOnly": true,
+		"noImplicitAny": true,
+		"diagnostics": true,
+		"noImplicitThis": true,
+		"noEmitOnError": true,
+		"lib": ["ES2022", "DOM"],
+		"target": "ES2022",
+		"module": "ES2022"
+	},
+	"include": ["index.js"],
+	"exclude": ["node_modules"]
+}

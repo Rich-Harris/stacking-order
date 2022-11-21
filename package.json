@@ -4,25 +4,27 @@
 	"version": "2.0.0",
 	"author": "Rich Harris",
 	"type": "module",
-	"main": "src/index.js",
+	"main": "index.js",
 	"repository": "https://github.com/Rich-Harris/stacking-order.git",
 	"license": "MIT",
 	"devDependencies": {
 		"kleur": "^4.1.5",
-		"playwright": "^1.28.0"
+		"playwright": "^1.28.0",
+		"typescript": "^4.9.3"
 	},
 	"files": [
-		"src",
+		"index.js",
 		"README.md"
 	],
 	"exports": {
 		".": {
-			"import": "./src/index.js",
-			"default": "./src/index.js"
+			"types": "./types/index.d.ts",
+			"import": "./index.js",
+			"default": "./index.js"
 		}
 	},
 	"scripts": {
-		"prepublishOnly": "npm test",
+		"prepublishOnly": "npm test && tsc",
 		"test": "node test/test.js"
 	}
 }
