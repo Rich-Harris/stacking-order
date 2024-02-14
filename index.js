@@ -60,7 +60,7 @@ function creates_stacking_context(node) {
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context
 	if (style.position === 'fixed') return true;
-	if ((style.zIndex !== 'auto' && style.position !== 'static') || is_flex_item(node)) return true;
+	if (style.zIndex !== 'auto' && (style.position !== 'static' || is_flex_item(node))) return true;
 	if (+style.opacity < 1) return true;
 	if ('transform' in style && style.transform !== 'none') return true;
 	if ('webkitTransform' in style && style.webkitTransform !== 'none') return true;
